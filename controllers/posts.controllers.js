@@ -1,3 +1,5 @@
+import { APIResponse } from "../utils/response.js";
+
 export function getAllPosts(request, response) {
     const posts = [
         {
@@ -9,5 +11,5 @@ export function getAllPosts(request, response) {
             content: "def",
         },
     ];
-    return response.send(posts);
+    return APIResponse(response, posts, "Posts récupérés");
 }
