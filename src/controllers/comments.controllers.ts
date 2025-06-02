@@ -1,15 +1,18 @@
 import { Request, Response } from "express";
+import { APIResponse } from "../utils/response";
 
-export function getAllComments(request: Request, response: Response) {
-    const comments = [
-        {
-            id: "1",
-            content: "abc",
-        },
-        {
-            id: "2",
-            content: "def",
-        },
-    ];
-    return response.send(comments);
-}
+export const commentsController = {
+    getAll: (request: Request, response: Response) => {
+        const comments = [
+            {
+                id: "1",
+                content: "abc",
+            },
+            {
+                id: "2",
+                content: "def",
+            },
+        ];
+        return APIResponse(response, comments, "OK");
+    },
+};

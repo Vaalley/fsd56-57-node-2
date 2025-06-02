@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { requestLogger } from "./middlewares/index";
-import router from "./routes/index";
+import { router } from "./routes/index";
 
 const app = express();
 

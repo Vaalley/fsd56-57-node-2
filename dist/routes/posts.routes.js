@@ -4,7 +4,7 @@ const express_1 = require("express");
 const posts_controllers_1 = require("../controllers/posts.controllers");
 const router = (0, express_1.Router)();
 // GET http:///localhost:3000/posts -> récupérer tout les posts
-router.get("/", posts_controllers_1.getAllPosts);
+router.get("/", posts_controllers_1.postsController.getAll);
 // GET http:///localhost:3000/posts/25 -> récupérer un post en fonction de son id
 router.get("/:id", (req, res) => { });
 // [POST] -     http://localhost:3000/posts -> créer un post

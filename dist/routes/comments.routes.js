@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const comments_controllers_js_1 = require("../controllers/comments.controllers.js");
+const comments_controllers_1 = require("../controllers/comments.controllers");
 const router = (0, express_1.Router)();
 // GET http:///localhost:3000/posts -> récupérer tout les commentaires
-router.get("/", comments_controllers_js_1.getAllComments);
+router.get("/", comments_controllers_1.commentsController.getAll);
 // GET http:///localhost:3000/posts/25 -> récupérer un commentaire en fonction de son id
 router.get("/:id", (req, res) => { });
 // [POST] -     http://localhost:3000/posts -> créer un commentaire

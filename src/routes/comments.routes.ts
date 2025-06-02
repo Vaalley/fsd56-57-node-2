@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { getAllComments } from "../controllers/comments.controllers.js";
+import { commentsController } from "../controllers/comments.controllers";
 
 const router = Router();
 
 // GET http:///localhost:3000/posts -> récupérer tout les commentaires
-router.get("/", getAllComments);
+router.get("/", commentsController.getAll);
 
 // GET http:///localhost:3000/posts/25 -> récupérer un commentaire en fonction de son id
 router.get("/:id", (req, res) => {});
