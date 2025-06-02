@@ -1,4 +1,6 @@
-export function getAllComments(request, response) {
+import { Request, Response } from "express";
+
+export function getAllComments(request: Request, response: Response) {
     const comments = [
         {
             id: "1",

@@ -1,6 +1,7 @@
-import { APIResponse } from "../utils/response.js";
+import { APIResponse } from "../utils/response";
+import { Request, Response } from "express";
 
-export function getAllPosts(request, response) {
+export function getAllPosts(request: Request, response: Response) {
     const posts = [
         {
             id: "uu5",
