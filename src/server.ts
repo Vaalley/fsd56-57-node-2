@@ -3,11 +3,19 @@ import dotenv from "dotenv";
 import { requestLogger } from "./middlewares/requestLogger";
 import router from "./routes";
 import { env } from "./config/env";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 
+const { PORT, CORS_ORIGIN } = env;
+
+app.use(cors({
+    origin: CORS_ORIGIN,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+}));
 app.use(express.json());
 app.use(requestLogger);
 app.use("/", router);
@@ -26,6 +34,6 @@ const middleWare1 = (
 };
 app.get("/", middleWare1, controller);
 
-app.listen(env.PORT, () => {
-    console.log("Le serveur est en écoute sur: http://localhost:" + env.PORT);
+app.listen(PORT, () => {
+    console.log("Le serveur est en écoute sur: http://localhost:" + PORT);
 });
