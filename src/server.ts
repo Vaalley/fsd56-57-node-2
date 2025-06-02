@@ -1,23 +1,44 @@
-import express, { NextFunction, Request, Response } from "express";
-import { requestLogger } from "./middlewares/index";
-import { router } from "./routes/index";
+// On  importe le module express qui sera utilisé pour faire tourner notre serveur Noder
+import express, { Request, Response, NextFunction } from "express";
+import { requestLogger } from "./middlewares/requestLogger";
+import router from "./routes";
 
+// Initialise notre app express
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); // pour analyser les requêtes JSON
 app.use(requestLogger);
+
+// Notre router global, situé dans src/routes/index.ts
 app.use("/", router);
+
 const PORT = 3000;
 
-function middleware1(request: Request, response: Response, next: NextFunction) {
-	console.log("Middleware 1");
-	next();
+
+// CI DESSOUS - EXEMPLE (A NE PAS PRENDRE EN CONSIDERATION) //////
+const controller = (request: Request, response: Response) => {
+    response.send("Bienvenue page d'accueil");
 }
 
-app.get("/", middleware1, (request: Request, response: Response) => {
-	response.send("Hello World!");
-});
+const middleWare1 = (request: Request, response: Response, next: NextFunction) => {
+    console.log("On passe par le middleware 1 et tout va bien");
+    next();
+}
 
-app.listen(PORT, () => {
-	console.log(`Server started on localhost:${PORT}`);
-});
+const middleWare2 = (request: Request, response: Response, next: NextFunction) => {
+    console.log('ON PASSE PAS')
+    response.status(401).send("Interdit")
+} 
+
+// Définition des routes :
+app.get("/", middleWare1, middleWare2, controller)
+
+////////// FIN D'EXEMPLE
+//////////////////////////////////////////////////////////////////
+
+app.listen(PORT, () => { // Mise en écoute du serveur (met le serveur en écoute sur le port spécifié et affiche un message à la console quand c'est prêt)
+    console.log("Le serveur est en écoute sur: http://localhost:" + PORT);
+})
+
+// Controller => fonction appellée par la route (ex: (req, res) => { ... })
+// Route => ensemble de path + methode + controller

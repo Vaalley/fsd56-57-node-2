@@ -1,0 +1,1 @@
+// REPRODUIRE LA MEME CHOSE QUE POSTS.CONTROLLER.JS (avec un controller mock / factice c'est pas grave)

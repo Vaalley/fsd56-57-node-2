@@ -1,9 +1,17 @@
+// http://localhost:3000
+
 import { Router } from "express";
-import postRouter from "./posts.routes";
-import commentRouter from "./comments.routes";
+import postRouter from "./posts.routes"
+const router = Router();
 
-export const router = Router();
 
-router.use("/posts", postRouter);
+// http://localhost:3000/posts
+router.use('/posts', postRouter);
 
-router.use("/comments", commentRouter);
+// http://localhost:3000/users
+
+
+export default router;
+
+
+// SERVER -> ROUTER (ce fichier) -> ROUTES (/users, /posts, ...) -> CONTROLLERS -> [MODELS] <-> DB

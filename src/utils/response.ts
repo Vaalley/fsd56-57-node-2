@@ -1,14 +1,8 @@
-import { Response } from "express";
+import { Response } from "express"
 
-export function APIResponse(
-    res: Response,
-    data: any,
-    message: string,
-    status: number = 200,
-) {
-    return res.status(status).json({
-        data,
+export const APIResponse = (response: Response, data: any, message: string, status: number = 200) => {
+    response.status(status).json({
         message,
-        status,
-    });
+        data
+    })
 }
