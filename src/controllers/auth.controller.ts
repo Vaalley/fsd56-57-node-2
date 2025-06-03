@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { APIResponse } from "../utils";
 import logger from "../utils/logger";
 import { userModel } from "../models";
+import { hashPassword, verifyPassword } from "../utils/password";
 
 const { JWT_SECRET, NODE_ENV } = env;
 
@@ -12,10 +13,25 @@ export const authController = {
   login: async (request: Request, response: Response) => {
     try {
       const { email, password } = request.body;
-      const [user] = await userModel.findByCredentials(email); // ici fonction model (exo à venir) (findByCredentials(email))
 
+      const [user] = await userModel.findByCredentials(email); // ici fonction model (exo à venir) (findByCredentials(email))
       if (!user) {
-        return APIResponse(response, null, "Utilisateur inexistant", 404);
+        return APIResponse(
+          response,
+          null,
+          "Les identifiants sont incorrects",
+          401,
+        );
+      }
+
+      const validPassword = await verifyPassword(password, user.password);
+      if (!validPassword) {
+        return APIResponse(
+          response,
+          null,
+          "Les identifiants sont incorrects",
+          401,
+        );
       }
 
       // vérification mot de passe hashé
@@ -39,7 +55,40 @@ export const authController = {
       APIResponse(response, null, "Erreur serveur", 500);
     }
   },
-  register: async (request: Request, response: Response) => {},
+  register: async (request: Request, response: Response) => {
+    try {
+      const { username, email, password } = request.body;
+
+      const [emailAlreadyExists] = await userModel.findByCredentials(email);
+      if (emailAlreadyExists) {
+        return APIResponse(
+          response,
+          null,
+          "L'email est déjà utilisé",
+          409,
+        );
+      }
+      const hash = await hashPassword(password);
+      if (!hash) {
+        return APIResponse(response, null, "Erreur serveur", 500);
+      }
+
+      const [newUser] = await userModel.create({
+        username,
+        email,
+        password: hash,
+      });
+      if (!newUser) {
+        return APIResponse(response, null, "Erreur serveur", 500);
+      }
+      APIResponse(response, newUser.id, "Vous êtes bien enregistré", 201);
+    } catch (error: any) {
+      logger.error(
+        `Erreur lors de l'enregistrement de l'utilisateur: ${error.message}`,
+      );
+      APIResponse(response, null, "Erreur serveur", 500);
+    }
+  },
   logout: async (request: Request, response: Response) => {
     response.clearCookie("accessToken");
     APIResponse(response, null, "Vous êtes déconnecté", 200);
