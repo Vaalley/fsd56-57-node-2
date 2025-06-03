@@ -9,7 +9,9 @@ export const commentModel = {
     create: (comment: NewComment) => {
         try {
             logger.info("POST /comments");
-            return db.insert(comments).values(comment).execute();
+            return db.insert(comments).values(comment).returning({
+                id: comments.id,
+            }).execute();
         } catch (error: any) {
             logger.error("POST /comments", error);
             throw error;
