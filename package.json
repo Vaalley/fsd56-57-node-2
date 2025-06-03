@@ -15,8 +15,9 @@
   "license": "ISC",
   "dependencies": {
     "@types/cors": "^2.8.18",
-    "cors": "^2.8.5",
+    "argon2": "^0.43.0",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.1",
     "express": "^5.1.0",

@@ -1,5 +1,5 @@
 import { db } from "../config/pool";
-import { users } from "../schemas";
+import { comments, posts, users } from "../schemas";
 import logger from "../utils/logger";
 import { eq } from "drizzle-orm";
 import { NewUser } from "../entities/User";
@@ -7,7 +7,10 @@ import { NewUser } from "../entities/User";
 export const userModel = {
   getAll: () => {
     try {
-      return db.select().from(users).execute();
+      return db.select({
+        id: users.id,
+        username: users.username,
+      }).from(users).execute();
     } catch (err: any) {
       logger.error(
         "Impossible de récupérer les utilisateurs: +",
@@ -18,7 +21,24 @@ export const userModel = {
   },
   get: (id: string) => {
     try {
-      return db.select().from(users).where(eq(users.id, id)).execute();
+      return db.select({
+        id: users.id,
+        username: users.username,
+        comments: {
+          id: comments.id,
+          content: comments.content,
+          createdAt: comments.createdAt,
+        },
+        posts: {
+          id: posts.id,
+          title: posts.title,
+          content: posts.content,
+        },
+      }).from(users)
+        .leftJoin(comments, eq(users.id, comments.authorId))
+        .leftJoin(posts, eq(users.id, posts.author))
+        .where(eq(users.id, id))
+        .execute();
     } catch (err: any) {
       logger.error(
         "Impossible de récupérer l'utilisateur: +",
@@ -29,7 +49,12 @@ export const userModel = {
   },
   findByCredentials: (email: string) => {
     try {
-      return db.select().from(users).where(eq(users.email, email))
+      return db.select({
+        id: users.id,
+        password: users.password,
+        username: users.username,
+        email: users.email,
+      }).from(users).where(eq(users.email, email))
         .execute();
     } catch (err: any) {
       logger.error(

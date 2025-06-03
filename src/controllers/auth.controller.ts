@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { APIResponse } from "../utils";
 import logger from "../utils/logger";
+import { userModel } from "../models";
 
 const { JWT_SECRET, NODE_ENV } = env;
 
@@ -11,7 +12,11 @@ export const authController = {
   login: async (request: Request, response: Response) => {
     try {
       const { email, password } = request.body;
-      const user = { id: "xxx" }; // ici fonction model (exo à venir) (findByCredentials(email))
+      const [user] = await userModel.findByCredentials(email); // ici fonction model (exo à venir) (findByCredentials(email))
+
+      if (!user) {
+        return APIResponse(response, null, "Utilisateur inexistant", 404);
+      }
 
       // vérification mot de passe hashé
       // En dessous, on admet que le mot de passe saisit est le bon !
