@@ -4,6 +4,7 @@ import { posts } from "../schemas";
 import { NewPost } from "../entities/Post";
 import { users } from "../schemas";
 import { and, eq } from "drizzle-orm";
+import { comments } from "../schemas";
 
 export const postModel = {
     create: (post: NewPost) => {
@@ -11,6 +12,7 @@ export const postModel = {
             logger.info("POST /posts");
             return db.insert(posts).values(post).returning({
                 id: posts.id,
+                title: posts.title,
             }).execute();
         } catch (error: any) {
             logger.error("POST /posts", error);
@@ -73,8 +75,14 @@ export const postModel = {
                     id: users.id,
                     username: users.username,
                 },
+                comments: {
+                    id: comments.id,
+                    content: comments.content,
+                    createdAt: comments.createdAt,
+                },
             }).from(posts)
                 .leftJoin(users, eq(posts.authorId, users.id))
+                .leftJoin(comments, eq(posts.id, comments.postId))
                 .where(eq(posts.id, id))
                 .execute();
         } catch (error: any) {
