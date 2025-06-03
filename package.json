@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "concurrently \"tsc --watch\" \"tsnd --respawn src/server.ts\"",
-    "generate": "drizzle-kit",
-    "migrate": "drizzle-kit migrate",
-    "studio": "drizzle-kit studio"
+    "generate": "drizzle-kit generate --config=src/config/drizzle.ts",
+    "migrate": "tsx -r dotenv/config src/config/migrate.ts",
+    "studio": "drizzle-kit studio --config=src/config/drizzle.ts"
   },
   "keywords": [],
   "author": "",
