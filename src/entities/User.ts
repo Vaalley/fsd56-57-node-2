@@ -1,4 +1,4 @@
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { users } from "../schemas";
 
 // Un type qui represente un model user au moment de la selection dans la db

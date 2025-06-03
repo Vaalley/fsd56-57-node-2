@@ -1,4 +1,4 @@
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { comments } from "../schemas";
 
 export type Comment = InferSelectModel<typeof comments>;
