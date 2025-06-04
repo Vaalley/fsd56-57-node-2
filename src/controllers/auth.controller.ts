@@ -6,6 +6,8 @@ import { APIResponse } from "../utils";
 import logger from "../utils/logger";
 import { userModel } from "../models";
 import { hashPassword, verifyPassword } from "../utils/password";
+import { userRegisterValidation } from "../validation";
+import z from "zod";
 
 const { JWT_SECRET, NODE_ENV } = env;
 
@@ -57,7 +59,9 @@ export const authController = {
   },
   register: async (request: Request, response: Response) => {
     try {
-      const { username, email, password } = request.body;
+      const { username, email, password } = userRegisterValidation.parse(
+        request.body,
+      );
 
       const [emailAlreadyExists] = await userModel.findByCredentials(email);
       if (emailAlreadyExists) {
@@ -83,6 +87,14 @@ export const authController = {
       }
       APIResponse(response, newUser.id, "Vous êtes bien enregistré", 201);
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return APIResponse(
+          response,
+          error.errors[0].message,
+          "Validation error",
+          400,
+        );
+      }
       logger.error(
         `Erreur lors de l'enregistrement de l'utilisateur: ${error.message}`,
       );
