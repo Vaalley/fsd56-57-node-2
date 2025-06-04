@@ -21,24 +21,28 @@ export const userModel = {
   },
   get: (id: string) => {
     try {
-      return db.select({
-        id: users.id,
-        username: users.username,
-        comments: {
-          id: comments.id,
-          content: comments.content,
-          createdAt: comments.createdAt,
+      return db.query.users.findFirst({
+        columns: {
+          id: true,
+          username: true,
         },
-        posts: {
-          id: posts.id,
-          title: posts.title,
-          content: posts.content,
+        with: {
+          comments: {
+            columns: {
+              id: true,
+              content: true,
+              createdAt: true,
+            },
+          },
+          posts: {
+            columns: {
+              id: true,
+              title: true,
+              content: true,
+            },
+          },
         },
-      }).from(users)
-        .leftJoin(comments, eq(users.id, comments.authorId))
-        .leftJoin(posts, eq(users.id, posts.author))
-        .where(eq(users.id, id))
-        .execute();
+      });
     } catch (err: any) {
       logger.error(
         "Impossible de récupérer l'utilisateur: +",

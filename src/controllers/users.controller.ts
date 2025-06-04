@@ -8,7 +8,7 @@ const usersController = {
     try {
       const { id } = request.params;
       logger.info("[GET] Récupérer un utilisateur");
-      const [user] = await userModel.get(id);
+      const user = await userModel.get(id);
       if (!user) {
         return APIResponse(
           response,
