@@ -8,7 +8,7 @@ const postsController = {
     try {
       const { id } = request.params;
       logger.info("[GET] Récupérer un post");
-      const [post] = await postModel.get(id);
+      const post = await postModel.get(id);
       if (!post) {
         return APIResponse(response, null, "Post inexistant", 404);
       }

@@ -33,20 +33,26 @@ export const postModel = {
 
   getAll: () => {
     try {
-      return db.select({
-        id: posts.id,
-        title: posts.title,
-        content: posts.content,
-        author: {
-          id: users.id,
-          username: users.username,
+      return db.query.posts.findMany({
+        with: {
+          user: {
+            columns: {
+              id: true,
+              username: true,
+            },
+          },
+          comments: {
+            with: {
+              user: {
+                columns: {
+                  id: true,
+                  username: true,
+                },
+              },
+            },
+          },
         },
-        createdAt: posts.created_at,
-      }).from(posts)
-        .leftJoin(
-          users,
-          eq(comments.authorId, users.id),
-        ).execute();
+      });
     } catch (err: any) {
       logger.error("Impossible de récupérer les posts: +", err.message);
       return [];
@@ -55,30 +61,38 @@ export const postModel = {
 
   get: (id: string) => {
     try {
-      return db.select({
-        id: posts.id,
-        title: posts.title,
-        content: posts.content,
-        author: {
-          id: users.id,
-          username: users.username,
+      return db.query.posts.findFirst({
+        where: eq(posts.id, id),
+        columns: {
+          id: true,
+          title: true,
+          content: true,
+          created_at: true,
         },
-        comments: {
-          id: comments.id,
-          content: comments.content,
-          createdAt: comments.createdAt,
+        with: {
+          user: {
+            columns: {
+              id: true,
+              username: true,
+            },
+          },
+          comments: {
+            columns: {
+              id: true,
+              content: true,
+              createdAt: true,
+            },
+            with: {
+              user: {
+                columns: {
+                  id: true,
+                  username: true,
+                },
+              },
+            },
+          },
         },
-        createdAt: posts.created_at,
-      }).from(posts)
-        .leftJoin( // On veut faire un LEFT JOIN entre la table posts et la table comments
-          comments,
-          eq(posts.id, comments.postId), // Lorsque l'id du post est égal à l'id du post dans les commentaires
-        ).leftJoin(
-          users,
-          eq(posts.author, users.id), // Lorsque l'id de l'auteur du post est égal à l'id de l'user
-        ).where( // Nous cherchons le post en fonction de son id
-          eq(posts.id, id),
-        ).execute();
+      });
     } catch (err: any) {
       logger.error("Impossible de récupérer le post: +", err.message);
       throw new Error("Le post ne peut pas être récupéré");
