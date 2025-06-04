@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { APIResponse } from "../utils/response";
 import logger from "../utils/logger";
 import { postModel } from "../models";
+import { postValidation } from "../validation";
+import z from "zod";
 
 const postsController = {
   get: async (request: Request, response: Response) => {
@@ -27,7 +29,7 @@ const postsController = {
   },
   create: async (request: Request, response: Response) => {
     try {
-      const { content, title } = request.body;
+      const { content, title } = postValidation.parse(request.body);
       const { user } = response.locals;
       logger.info("[POST] Créer un post");
       await postModel.create({
@@ -37,6 +39,14 @@ const postsController = {
       });
       APIResponse(response, null, "OK", 201);
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return APIResponse(
+          response,
+          error.errors[0].message,
+          "Validation error",
+          400,
+        );
+      }
       logger.error(
         "Erreur lors de la récupération du post: " + error.message,
       );
